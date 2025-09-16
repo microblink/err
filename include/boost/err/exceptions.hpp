@@ -52,8 +52,6 @@ BOOST_OPTIMIZE_FOR_SIZE_BEGIN()
 /// \detail Intended to be specialised or overloaded for user types. Boost.Err
 /// will call it unqualified in order to allow ADL to kick in.
 ///
-/// \throws nothing
-///
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class Error>
@@ -86,7 +84,7 @@ namespace detail
 {
     inline auto uncaught_exceptions() noexcept
     {
-    #if ( __cpp_lib_uncaught_exceptions && !defined( __APPLE__ ) ) || ( __cpp_lib_uncaught_exceptions && defined( __APPLE__ ) && defined( TARGET_OS_IPHONE ) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_10_0 )
+    #if ( __cpp_lib_uncaught_exceptions )
         return std::uncaught_exceptions();
     #else
         return std::uncaught_exception();
