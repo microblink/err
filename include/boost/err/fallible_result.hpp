@@ -18,6 +18,7 @@
 #define fallible_result_hpp__568DC1C1_A422_4EE6_9993_8FC98EE846C8
 #pragma once
 //------------------------------------------------------------------------------
+#include "exceptions.hpp"
 #include "result_or_error.hpp"
 
 #include <boost/assert.hpp>
@@ -120,14 +121,6 @@ namespace detail
         static void remove_instance( bool const inspected ) { singleton().remove_instance_aux( inspected ); }
 
     private:
-        static auto uncaught_exceptions() noexcept
-        {
-        #if ( __cpp_lib_uncaught_exceptions && !defined( __APPLE__ ) ) || ( __cpp_lib_uncaught_exceptions && defined( __APPLE__ ) && defined( TARGET_OS_IPHONE ) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_10_0 )
-            return std::uncaught_exceptions();
-        #else
-            return std::uncaught_exception();
-        #endif // __cpp_lib_uncaught_exceptions
-        }
 
         void add_instance_aux() { ++live_instance_counter; }
 
@@ -140,7 +133,7 @@ namespace detail
             (
                 at_least_one_inspected ||
                 live_instance_counter  ||  // there are still live fallible_results (allow that one of those will be inspected even if none have been so far)
-                uncaught_exceptions(), // a '3rd party' exception caused early exit
+                detail::uncaught_exceptions(), // a '3rd party' exception caused early exit
                 "Uninspected fallible_result<T>."
             );
             at_least_one_inspected &= ( live_instance_counter != 0 );
